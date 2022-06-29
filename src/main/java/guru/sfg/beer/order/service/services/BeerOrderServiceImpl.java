@@ -92,6 +92,8 @@ public class BeerOrderServiceImpl implements BeerOrderService {
 
             log.debug("Saved Beer Order: " + beerOrder.getId());
 
+            log.debug("Customer ID " +customerId);
+
             //todo impl
           //  publisher.publishEvent(new NewBeerOrderEvent(savedBeerOrder));
 
