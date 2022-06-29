@@ -17,6 +17,7 @@
 
 package guru.sfg.beer.order.service.web.model;
 
+import guru.sfg.beer.order.service.services.beer.model.BeerStyleEnum;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -32,7 +33,7 @@ public class BeerOrderLineDto extends BaseItem {
 
     @Builder
     public BeerOrderLineDto(UUID id, Integer version, OffsetDateTime createdDate, OffsetDateTime lastModifiedDate,
-                            String upc, String beerName, UUID beerId, Integer orderQuantity) {
+                            String upc, String beerName, BeerStyleEnum beerStyle, UUID beerId, Integer orderQuantity) {
         super(id, version, createdDate, lastModifiedDate);
         this.upc = upc;
         this.beerName = beerName;
@@ -42,6 +43,8 @@ public class BeerOrderLineDto extends BaseItem {
 
     private String upc;
     private String beerName;
+
+    private BeerStyleEnum beerStyle;
     private UUID beerId;
     private Integer orderQuantity = 0;
 }
