@@ -8,17 +8,15 @@ import org.springframework.jms.support.converter.MessageType;
 
 @Configuration
 public class JmsConfig {
-
-    public static final String BEER_SERVICE_QUEUE="beer-service";
-    public static final String BEER_ORDER_SERVICE_QUEUE="beer-order-service";
-    public static final String BEER_INVENTORY_SERVICE_QUEUE="beer-inventory-service";
+    public static final String VALIDATE_ORDER_QUEUE = "validate-order";
+    public static final String VALIDATE_ORDER_RESPONSE_QUEUE = "validate-order-response";
+    public static final String ALLOCATE_ORDER_QUEUE = "allocate-order";
 
     @Bean
-    public MessageConverter messageConverter(){
+    public MessageConverter jacksonJmsMessageConverter() {
         MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
         converter.setTargetType(MessageType.TEXT);
         converter.setTypeIdPropertyName("_type");
-
         return converter;
     }
 }
