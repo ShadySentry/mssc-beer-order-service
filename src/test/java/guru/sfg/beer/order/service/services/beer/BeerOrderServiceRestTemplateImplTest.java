@@ -16,7 +16,7 @@ class BeerOrderServiceRestTemplateImplTest {
     BeerService beerService;
 
     @Test
-    void getBeerTest() throws ChangeSetPersister.NotFoundException {
+    void getBeerTest() {
         BeerDto beerDto = beerService.getBeer(BeerOrderBootStrap.BEER_1_UPC).get();
 
         assertTrue(beerDto != null);
