@@ -19,9 +19,9 @@ public class BeerOrderStateMachineConfig extends StateMachineConfigurerAdapter<B
 
     private final Action<BeerOrderStatusEnum, BeerOrderEventEnum> allocateOrderAction;
 
-    public BeerOrderStateMachineConfig(Action<BeerOrderStatusEnum, BeerOrderEventEnum> validateOrderAction, Action<BeerOrderStatusEnum, BeerOrderEventEnum> allocateOrderAvtion) {
+    public BeerOrderStateMachineConfig(Action<BeerOrderStatusEnum, BeerOrderEventEnum> validateOrderAction, Action<BeerOrderStatusEnum, BeerOrderEventEnum> allocateOrderAction) {
         this.validateOrderAction = validateOrderAction;
-        this.allocateOrderAction = allocateOrderAvtion;
+        this.allocateOrderAction = allocateOrderAction;
     }
 
     @Override
