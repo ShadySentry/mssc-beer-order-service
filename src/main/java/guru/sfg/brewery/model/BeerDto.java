@@ -19,35 +19,20 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BeerDto implements Serializable {
-    static final long serialVersionUID= -7694061057063915898L;
-    @Null
-    private UUID id;
+public class BeerDto {
+    private UUID id = null;
+    private Integer version = null;
 
-    @Null
-    private Integer version;
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ssZ", shape=JsonFormat.Shape.STRING)
+    private OffsetDateTime createdDate = null;
 
-    @Null
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ",shape = JsonFormat.Shape.STRING)
-    private OffsetDateTime createDate;
-
-    @Null
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ",shape = JsonFormat.Shape.STRING)
-    private OffsetDateTime lastModifiedDate;
-
-    @NotBlank
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ssZ", shape=JsonFormat.Shape.STRING)
+    private OffsetDateTime lastModifiedDate = null;
     private String beerName;
-
-    @NotNull
     private String beerStyle;
-
-    @NotNull
     private String upc;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
-    @NotNull
-    @Positive
-    private BigDecimal price;
-
     private Integer quantityOnHand;
+
+    @JsonFormat(shape= JsonFormat.Shape.STRING)
+    private BigDecimal price;
 }

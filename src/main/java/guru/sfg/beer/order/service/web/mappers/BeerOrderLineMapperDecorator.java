@@ -5,14 +5,14 @@ import guru.sfg.beer.order.service.services.beer.BeerService;
 import guru.sfg.brewery.model.BeerDto;
 import guru.sfg.brewery.model.BeerOrderLineDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.Optional;
 
-public class BeerOrderLineMapperDecorator implements BeerOrderLineMapper {
+public abstract class BeerOrderLineMapperDecorator implements BeerOrderLineMapper {
 
     private BeerService beerService;
-
-    private BeerOrderLineMapper beerOrderMapper;
+    private BeerOrderLineMapper beerOrderLineMapper;
 
     @Autowired
     public void setBeerService(BeerService beerService) {
@@ -20,15 +20,16 @@ public class BeerOrderLineMapperDecorator implements BeerOrderLineMapper {
     }
 
     @Autowired
-    public void setBeerOrderMapper(BeerOrderLineMapper beerOrderMapper) {
-        this.beerOrderMapper = beerOrderMapper;
+    @Qualifier("delegate")
+    public void setBeerOrderLineMapper(BeerOrderLineMapper beerOrderLineMapper) {
+        this.beerOrderLineMapper = beerOrderLineMapper;
     }
 
     @Override
     public BeerOrderLineDto beerOrderLineToDto(BeerOrderLine line) {
-        Optional<BeerDto> beerDtoOptional = beerService.getBeer(line.getUpc());
+        BeerOrderLineDto orderLineDto = beerOrderLineMapper.beerOrderLineToDto(line);
+        Optional<BeerDto> beerDtoOptional = beerService.getBeerByUpc(line.getUpc());
 
-        BeerOrderLineDto orderLineDto = beerOrderMapper.beerOrderLineToDto(line);
         beerDtoOptional.ifPresent(beerDto -> {
             orderLineDto.setBeerName(beerDto.getBeerName());
             orderLineDto.setBeerStyle(beerDto.getBeerStyle());
@@ -37,15 +38,5 @@ public class BeerOrderLineMapperDecorator implements BeerOrderLineMapper {
         });
 
         return orderLineDto;
-    }
-
-//    @Override
-//    public BeerOrderLineDto beerOrderLineToDtoNoBeerInfo(BeerOrderLine line) {
-//        return beerOrderMapper.beerOrderLineToDto(line);
-//    }
-
-    @Override
-    public BeerOrderLine dtoToBeerOrderLine(BeerOrderLineDto dto) {
-        return beerOrderMapper.dtoToBeerOrderLine(dto);
     }
 }

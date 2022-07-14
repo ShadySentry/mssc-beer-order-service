@@ -10,7 +10,5 @@ import org.mapstruct.Mapper;
 public interface BeerOrderLineMapper {
     BeerOrderLineDto beerOrderLineToDto(BeerOrderLine line);
 
-//    BeerOrderLineDto beerOrderLineToDtoNoBeerInfo(BeerOrderLine line);
-
     BeerOrderLine dtoToBeerOrderLine(BeerOrderLineDto dto);
 }

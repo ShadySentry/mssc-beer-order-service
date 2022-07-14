@@ -28,8 +28,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OrderStatusUpdate  {
-
+public class OrderStatusUpdate {
     @JsonProperty("id")
     private UUID id = null;
 
