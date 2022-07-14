@@ -39,7 +39,7 @@ public class AllocateOrderAction implements Action<BeerOrderStatusEnum, BeerOrde
     public void execute(StateContext<BeerOrderStatusEnum, BeerOrderEventEnum> context) {
 
         String beerOrderId = (String) context.getMessageHeaders().get(BeerOrderManagerImpl.ORDER_ID_HEADER);
-        BeerOrder beerOrder = beerOrderRepository.findOneById(UUID.fromString(beerOrderId));
+        BeerOrder beerOrder = beerOrderRepository.findById(UUID.fromString(beerOrderId)).get();
                                                                     //have to be AllocateOrderRequest  but not beerOrderDto ????
         jmsTemplate.convertAndSend(JmsConfig.ALLOCATE_ORDER_QUEUE, beerOrderMapper.beerOrderToDto(beerOrder));
 

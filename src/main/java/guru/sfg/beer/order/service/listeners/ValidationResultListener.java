@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Slf4j
 @Component
-public class ValidationResultListener{
+public class ValidationResultListener {
 
     private final BeerOrderManager beerOrderManager;
 
@@ -21,10 +21,10 @@ public class ValidationResultListener{
 
     @JmsListener(destination = JmsConfig.VALIDATE_ORDER_RESPONSE_QUEUE)
     public void listen(ValidateOrderResult result){
-        final UUID beerOrderId =result.getOrderId();
+        final UUID beerOrderId = result.getOrderId();
 
         log.debug("Validation Result for Order Id: " + beerOrderId);
 
-        beerOrderManager.processValidationResult(beerOrderId,result.getIsValid());
+        beerOrderManager.processValidationResult(beerOrderId, result.getIsValid());
     }
 }

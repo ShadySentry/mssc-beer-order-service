@@ -19,7 +19,6 @@ package guru.sfg.brewery.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import guru.sfg.beer.order.service.services.beer.model.BeerStyleEnum;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -48,10 +47,10 @@ public class BeerOrderLineDto {
 
     private String upc;
     private String beerName;
-
-    private BeerStyleEnum beerStyle;
-
-    private BigDecimal beerPrice;
+    private String beerStyle;
     private UUID beerId;
     private Integer orderQuantity = 0;
+    private BigDecimal price;
+
+    private Integer quantityAllocated;
 }

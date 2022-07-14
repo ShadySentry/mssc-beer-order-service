@@ -1,12 +1,11 @@
 package guru.sfg.beer.order.service.services.beer;
 
 import guru.sfg.beer.order.service.bootstrap.BeerOrderBootStrap;
-import guru.sfg.beer.order.service.services.beer.model.BeerDto;
+import guru.sfg.brewery.model.BeerDto;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.web.client.HttpServerErrorException;
 
 import static org.junit.jupiter.api.Assertions.*;

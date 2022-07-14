@@ -7,10 +7,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class ValidateOrderRequest {
-
-    private BeerOrderDto beerOrder;
+public class AllocateOrderResult {
+    private BeerOrderDto beerOrderDto;
+    private Boolean allocationError = false;
+    private Boolean pendingInventory = false;
 }

@@ -1,6 +1,6 @@
 package guru.sfg.beer.order.service.services.beer;
 
-import guru.sfg.beer.order.service.services.beer.model.BeerDto;
+import guru.sfg.brewery.model.BeerDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -14,9 +14,9 @@ import java.util.UUID;
 @ConfigurationProperties(prefix = "sfg.brewery", ignoreInvalidFields = false)
 @Component
 public class BeerOrderServiceRestTemplateImpl implements BeerService {
-    private final String BEER_UPC_PATH_V1 = "/api/v1/beerUpc/";
+    public static final String BEER_UPC_PATH_V1 = "/api/v1/beerUpc/";
 
-    private final String BEER_PATH_V1 = "/api/v1/beer/";
+    public static final String BEER_PATH_V1 = "/api/v1/beer/";
     private final RestTemplate restTemplate;
 
     private String beerServiceHost;
@@ -35,10 +35,6 @@ public class BeerOrderServiceRestTemplateImpl implements BeerService {
         log.debug("Calling beer service with URL " + url);
         log.debug("UPC");
 
-//        ResponseEntity<BeerDto> responseEntity = restTemplate
-//                .exchange(url, HttpMethod.GET, null,
-//                        new ParameterizedTypeReference<BeerDto>() {
-//                        }, (Object) upc);
 
         return Optional.ofNullable(restTemplate.getForObject(url+upc,BeerDto.class));
     }

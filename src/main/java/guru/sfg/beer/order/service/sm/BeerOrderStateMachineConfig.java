@@ -16,7 +16,6 @@ import java.util.EnumSet;
 public class BeerOrderStateMachineConfig extends StateMachineConfigurerAdapter<BeerOrderStatusEnum, BeerOrderEventEnum> {
 
     private final Action<BeerOrderStatusEnum, BeerOrderEventEnum> validateOrderAction;
-
     private final Action<BeerOrderStatusEnum, BeerOrderEventEnum> allocateOrderAction;
 
     public BeerOrderStateMachineConfig(Action<BeerOrderStatusEnum, BeerOrderEventEnum> validateOrderAction, Action<BeerOrderStatusEnum, BeerOrderEventEnum> allocateOrderAction) {
@@ -43,15 +42,27 @@ public class BeerOrderStateMachineConfig extends StateMachineConfigurerAdapter<B
                 .event(BeerOrderEventEnum.VALIDATE_ORDER)
                 .action(validateOrderAction)
             .and().withExternal()
-                .source(BeerOrderStatusEnum.NEW).target(BeerOrderStatusEnum.VALIDATED) //looks like error here. BeerOrderStatusEnum.NEW have to be BeerOrderStatusEnum.VALIDATION_PENDING
+                .source(BeerOrderStatusEnum.VALIDATION_PENDING).target(BeerOrderStatusEnum.VALIDATED)
                 .event(BeerOrderEventEnum.VALIDATION_PASSED)
             .and().withExternal()
-                .source(BeerOrderStatusEnum.NEW).target(BeerOrderStatusEnum.VALIDATION_EXCEPTION)
+                .source(BeerOrderStatusEnum.VALIDATION_PENDING).target(BeerOrderStatusEnum.VALIDATION_EXCEPTION)
                 .event(BeerOrderEventEnum.VALIDATION_FAILED)
             .and().withExternal()
                 .source(BeerOrderStatusEnum.VALIDATED).target(BeerOrderStatusEnum.ALLOCATION_PENDING)
                 .event(BeerOrderEventEnum.ALLOCATE_ORDER)
-                .action(allocateOrderAction);
+                .action(allocateOrderAction)
+            .and().withExternal()
+                .source(BeerOrderStatusEnum.ALLOCATION_PENDING).target(BeerOrderStatusEnum.ALLOCATED)
+                .event(BeerOrderEventEnum.ALLOCATION_SUCCESS)
+            .and().withExternal()
+                .source(BeerOrderStatusEnum.ALLOCATION_PENDING).target(BeerOrderStatusEnum.ALLOCATION_EXCEPTION)
+                .event(BeerOrderEventEnum.ALLOCATION_FAILED)
+            .and().withExternal()
+                .source(BeerOrderStatusEnum.ALLOCATION_PENDING).target(BeerOrderStatusEnum.PENDING_INVENTORY)
+                .event(BeerOrderEventEnum.ALLOCATION_NO_INVENTORY);
+
+
+
 
     }
 }

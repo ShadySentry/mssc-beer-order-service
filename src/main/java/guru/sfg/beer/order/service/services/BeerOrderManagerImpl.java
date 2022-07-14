@@ -5,6 +5,8 @@ import guru.sfg.beer.order.service.domain.BeerOrderEventEnum;
 import guru.sfg.beer.order.service.domain.BeerOrderStatusEnum;
 import guru.sfg.beer.order.service.repositories.BeerOrderRepository;
 import guru.sfg.beer.order.service.sm.BeerOrderStateChangeInterceptor;
+import guru.sfg.brewery.model.BeerOrderDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.statemachine.StateMachine;
@@ -13,9 +15,11 @@ import org.springframework.statemachine.support.DefaultStateMachineContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 
+@Slf4j
 @Service
 public class BeerOrderManagerImpl implements BeerOrderManager {
 
@@ -43,22 +47,65 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
         return savedBeerOrder;
     }
 
+    @Transactional
     @Override
     public void processValidationResult(UUID beerOrderId, Boolean isValid) {
-        BeerOrder beerOrder = beerOrderRepository.getOne(beerOrderId);
+        log.debug("Process Validation Result for beerOrderId: " + beerOrderId + " Valid? " + isValid);
 
-        if(isValid){
-            sendBeerOrderEvent(beerOrder, BeerOrderEventEnum.VALIDATION_PASSED);
+        Optional<BeerOrder> beerOrderOptional = beerOrderRepository.findById(beerOrderId);
 
-            BeerOrder validatedBeerOrder = beerOrderRepository.findOneById(beerOrderId);
-            sendBeerOrderEvent(validatedBeerOrder,BeerOrderEventEnum.ALLOCATE_ORDER);
+        beerOrderOptional.ifPresentOrElse(beerOrder -> {
+            if (isValid) {
+                sendBeerOrderEvent(beerOrder, BeerOrderEventEnum.VALIDATION_PASSED);
 
-        } else {
-            sendBeerOrderEvent(beerOrder, BeerOrderEventEnum.VALIDATION_FAILED);
-        }
+                BeerOrder validatedOrder = beerOrderRepository.findById(beerOrderId).get();
+
+                sendBeerOrderEvent(validatedOrder, BeerOrderEventEnum.ALLOCATE_ORDER);
+
+            } else {
+                sendBeerOrderEvent(beerOrder, BeerOrderEventEnum.VALIDATION_FAILED);
+            }
+        },()->log.error("Order Not Found. Id: " + beerOrderId));
+
+
     }
 
-    private void sendBeerOrderEvent(BeerOrder beerOrder, BeerOrderEventEnum eventEnum){
+    @Override
+    public void beerOrderAllocationPassed(BeerOrderDto beerOrderDto) {
+        BeerOrder beerOrder = beerOrderRepository.getOne(beerOrderDto.getId());
+        sendBeerOrderEvent(beerOrder, BeerOrderEventEnum.ALLOCATION_SUCCESS);
+        updateAllocatedQty(beerOrderDto, beerOrder);
+    }
+
+    @Override
+    public void beerOrderAllocationPendingInventory(BeerOrderDto beerOrderDto) {
+        BeerOrder beerOrder = beerOrderRepository.getOne(beerOrderDto.getId());
+        sendBeerOrderEvent(beerOrder, BeerOrderEventEnum.ALLOCATION_NO_INVENTORY);
+
+        updateAllocatedQty(beerOrderDto, beerOrder);
+    }
+
+    private void updateAllocatedQty(BeerOrderDto beerOrderDto, BeerOrder beerOrder) {
+        BeerOrder allocatedOrder = beerOrderRepository.getOne(beerOrderDto.getId());
+
+        allocatedOrder.getBeerOrderLines().forEach(beerOrderLine -> {
+            beerOrderDto.getBeerOrderLines().forEach(beerOrderLineDto -> {
+                if (beerOrderLine.getId().equals(beerOrderLineDto.getId())) {
+                    beerOrderLine.setQuantityAllocated(beerOrderLineDto.getQuantityAllocated());
+                }
+            });
+        });
+
+        beerOrderRepository.saveAndFlush(beerOrder);
+    }
+
+    @Override
+    public void beerOrderAllocationFailed(BeerOrderDto beerOrderDto) {
+        BeerOrder beerOrder = beerOrderRepository.getOne(beerOrderDto.getId());
+        sendBeerOrderEvent(beerOrder, BeerOrderEventEnum.ALLOCATION_FAILED);
+    }
+
+    private void sendBeerOrderEvent(BeerOrder beerOrder, BeerOrderEventEnum eventEnum) {
         StateMachine<BeerOrderStatusEnum, BeerOrderEventEnum> sm = build(beerOrder);
 
         Message msg = MessageBuilder.withPayload(eventEnum)
