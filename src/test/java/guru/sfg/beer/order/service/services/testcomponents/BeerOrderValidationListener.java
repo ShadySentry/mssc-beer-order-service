@@ -17,7 +17,7 @@ public class BeerOrderValidationListener {
     private final JmsTemplate jmsTemplate;
 
     @JmsListener(destination = JmsConfig.VALIDATE_ORDER_QUEUE)
-    public void list(Message msg){
+    public void listen(Message msg){
 
         boolean isValid = true;
 

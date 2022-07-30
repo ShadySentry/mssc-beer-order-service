@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 import java.util.UUID;
 
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -37,6 +38,16 @@ public class ValidateOrderAction implements Action<BeerOrderStatusEnum, BeerOrde
                     .beerOrder(beerOrderMapper.beerOrderToDto(beerOrder))
                     .build());
         }, () -> log.error("Order Not Found. Id: " + beerOrderId));
+
+//        if(beerOrderOptional.isPresent()){
+//            BeerOrder beerOrder = beerOrderOptional.get();
+//
+//            jmsTemplate.convertAndSend(JmsConfig.VALIDATE_ORDER_QUEUE, ValidateOrderRequest.builder()
+//                    .beerOrder(beerOrderMapper.beerOrderToDto(beerOrder))
+//                    .build());
+//        }else{
+//            log.error("Order Not Found. Id: " + beerOrderId);
+//        }
 
         log.debug("Sent Validation request to queue for order id " + beerOrderId);
     }
